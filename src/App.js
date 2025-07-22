@@ -7,16 +7,16 @@ function App() {
   const [previewImage, setPreviewImage] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const API_URL = process.env.REACT_APP_API_URL;
+  const REACT_APP_API_BASE = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
-    if (!API_URL) {
+    if (!REACT_APP_API_BASE) {
       console.error("API URL not defined in environment variables.");
       setErrorMessage("API URL is not configured. Please check your .env file.");
       return;
     }
 
-    fetch(`${API_URL}/images`)
+    fetch(`${REACT_APP_API_BASE}/images`)
       .then(async (res) => {
         if (!res.ok) throw new Error("Failed to fetch images");
         const data = await res.json();
@@ -26,7 +26,7 @@ function App() {
         console.error("Error fetching images:", err);
         setErrorMessage("Unable to load images. Please try again later.");
       });
-  }, [API_URL]);
+  }, [REACT_APP_API_BASE]);
 
   const handleImageUpload = async (e) => {
     const files = e.target.files;
@@ -41,7 +41,7 @@ function App() {
     }
 
     try {
-      const res = await fetch(`${API_URL}/upload`, {
+      const res = await fetch(`${REACT_APP_API_BASE}/upload`, {
         method: "POST",
         body: formData,
       });
