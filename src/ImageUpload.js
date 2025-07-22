@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 function ImageUpload({ onUpload }) {
-  const API = process.env.REACT_APP_API_URL || "https://risk-repost-backend.onrender.com/"; // fallback if env missing
+  const API = process.env.REACT_APP_API_URL || "https://risk-repost-backend.onrender.com"; // fallback if env missing
 
   const [isUploading, setIsUploading] = useState(false);
 
