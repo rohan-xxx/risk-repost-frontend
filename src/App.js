@@ -7,7 +7,7 @@ function App() {
   const [previewImage, setPreviewImage] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const REACT_APP_API_BASE = https://risk-repost-backend.onrender.com;
+  const REACT_APP_API_BASE = "https://risk-repost-backend.onrender.com";
 
   useEffect(() => {
     if (!REACT_APP_API_BASE) {
