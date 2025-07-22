@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 function ImageUpload({ onUpload }) {
-  const API = "https://risk-repost-backend.onrender.com"; 
+  const API = "https://risk-repost-backend.onrender.com"; // ✅ Fixed: wrapped URL in quotes
 
   const [isUploading, setIsUploading] = useState(false);
 
@@ -28,7 +28,7 @@ function ImageUpload({ onUpload }) {
       const data = await res.json();
 
       if (data.url) {
-        onUpload(data.url); // send uploaded image URL to parent
+        onUpload(data.url); // Send uploaded image URL to parent
       } else {
         alert("Upload failed: No URL returned");
       }
