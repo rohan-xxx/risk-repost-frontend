@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 function ImageUpload({ onUpload }) {
-  const API = https://risk-repost-backend.onrender.com; 
+  const API = "https://risk-repost-backend.onrender.com"; 
 
   const [isUploading, setIsUploading] = useState(false);
 
