@@ -9,25 +9,31 @@ function App() {
 
   const REACT_APP_API_BASE = "https://risk-repost-backend.onrender.com";
 
+  // ✅ Load previously uploaded images on initial render
   useEffect(() => {
-    if (!REACT_APP_API_BASE) {
-      console.error("API URL not defined in environment variables.");
-      setErrorMessage("API URL is not configured. Please check your .env file.");
-      return;
-    }
-
-    fetch(`${REACT_APP_API_BASE}/images`)
-      .then(async (res) => {
+    const fetchImages = async () => {
+      try {
+        const res = await fetch(`${REACT_APP_API_BASE}/images`);
         if (!res.ok) throw new Error("Failed to fetch images");
+
         const data = await res.json();
-        setImages(data.images || []);
-      })
-      .catch((err) => {
+        const urls = Array.isArray(data) ? data : data.images;
+
+        if (Array.isArray(urls)) {
+          setImages(urls);
+        } else {
+          throw new Error("Invalid image data format from backend");
+        }
+      } catch (err) {
         console.error("Error fetching images:", err);
         setErrorMessage("Unable to load images. Please try again later.");
-      });
-  }, [REACT_APP_API_BASE]);
+      }
+    };
 
+    fetchImages();
+  }, []);
+
+  // ✅ Upload new images
   const handleImageUpload = async (e) => {
     const files = e.target.files;
     if (!files || files.length === 0) {
@@ -50,17 +56,16 @@ function App() {
 
       const data = await res.json();
 
-      if (data.url) {
-        setImages((prev) => [...prev, data.url]);
-      } else {
-        throw new Error("Invalid response format");
-      }
+      // Handle both array and single image response
+      const newUrls = Array.isArray(data.url) ? data.url : [data.url];
+      setImages((prev) => [...prev, ...newUrls]);
     } catch (error) {
       console.error("Upload failed:", error);
       alert("Upload failed. Please try again.");
     }
   };
 
+  // ✅ Download image
   const handleDownload = (url) => {
     try {
       const link = document.createElement("a");
@@ -75,6 +80,7 @@ function App() {
     }
   };
 
+  // ✅ Zoom image
   const handleImageClick = (url) => setPreviewImage(url);
   const closePreview = () => setPreviewImage(null);
 
