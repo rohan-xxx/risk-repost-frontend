@@ -6,13 +6,15 @@ function App() {
   const [images, setImages] = useState([]);
   const [previewImage, setPreviewImage] = useState(null);
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   // Fetch images from backend
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/images`)
+    fetch(`${API_URL}/images`)
       .then((res) => res.json())
       .then((data) => setImages(data.images || []))
       .catch((err) => console.error("Error fetching images:", err));
-  }, []);
+  }, [API_URL]);
 
   // Upload images to backend
   const handleImageUpload = async (e) => {
@@ -23,8 +25,7 @@ function App() {
     }
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/upload`, {
-       {
+      const res = await fetch(`${API_URL}/upload`, {
         method: "POST",
         body: formData,
       });
@@ -80,7 +81,13 @@ function App() {
               src={url}
               alt={`upload-${idx}`}
               onClick={() => handleImageClick(url)}
-              style={{ cursor: "pointer", height: "180px", objectFit: "cover", width: "100%", borderRadius: "8px" }}
+              style={{
+                cursor: "pointer",
+                height: "180px",
+                objectFit: "cover",
+                width: "100%",
+                borderRadius: "8px",
+              }}
             />
             <div className="image-actions">
               <button onClick={() => handleDownload(url)}>Download</button>
