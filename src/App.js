@@ -5,20 +5,36 @@ import "./App.css";
 function App() {
   const [images, setImages] = useState([]);
   const [previewImage, setPreviewImage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const API_URL = process.env.REACT_APP_API_URL;
 
-  // Fetch images from backend
   useEffect(() => {
+    if (!API_URL) {
+      console.error("API URL not defined in environment variables.");
+      setErrorMessage("API URL is not configured. Please check your .env file.");
+      return;
+    }
+
     fetch(`${API_URL}/images`)
-      .then((res) => res.json())
-      .then((data) => setImages(data.images || []))
-      .catch((err) => console.error("Error fetching images:", err));
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Failed to fetch images");
+        const data = await res.json();
+        setImages(data.images || []);
+      })
+      .catch((err) => {
+        console.error("Error fetching images:", err);
+        setErrorMessage("Unable to load images. Please try again later.");
+      });
   }, [API_URL]);
 
-  // Upload images to backend
   const handleImageUpload = async (e) => {
     const files = e.target.files;
+    if (!files || files.length === 0) {
+      alert("No files selected.");
+      return;
+    }
+
     const formData = new FormData();
     for (let file of files) {
       formData.append("image", file);
@@ -30,35 +46,43 @@ function App() {
         body: formData,
       });
 
+      if (!res.ok) throw new Error("Upload request failed");
+
       const data = await res.json();
+
       if (data.url) {
         setImages((prev) => [...prev, data.url]);
+      } else {
+        throw new Error("Invalid response format");
       }
     } catch (error) {
       console.error("Upload failed:", error);
+      alert("Upload failed. Please try again.");
     }
   };
 
   const handleDownload = (url) => {
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "image.jpg";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "image.jpg";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Download failed:", error);
+      alert("Download failed.");
+    }
   };
 
-  const handleImageClick = (url) => {
-    setPreviewImage(url);
-  };
-
-  const closePreview = () => {
-    setPreviewImage(null);
-  };
+  const handleImageClick = (url) => setPreviewImage(url);
+  const closePreview = () => setPreviewImage(null);
 
   return (
     <div className="app">
       <h1 className="title">📸 Cloud Image Gallery</h1>
+
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
 
       <div className="upload-box">
         <label htmlFor="imageUpload" className="upload-label">
