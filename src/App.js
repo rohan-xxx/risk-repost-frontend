@@ -8,7 +8,7 @@ function App() {
 
   // Fetch images from backend
   useEffect(() => {
-    fetch("http://localhost:5000/images")
+    fetch(`${process.env.REACT_APP_API_URL}/images`)
       .then((res) => res.json())
       .then((data) => setImages(data.images || []))
       .catch((err) => console.error("Error fetching images:", err));
@@ -23,7 +23,8 @@ function App() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/upload", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/upload`, {
+       {
         method: "POST",
         body: formData,
       });
