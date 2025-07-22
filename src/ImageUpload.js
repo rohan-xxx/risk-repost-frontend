@@ -1,6 +1,8 @@
 import React from "react";
 
 function ImageUpload({ onUpload }) {
+  const API = process.env.REACT_APP_API_BASE;
+
   const handleChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -9,7 +11,7 @@ function ImageUpload({ onUpload }) {
     formData.append("image", file);
 
     try {
-      const res = await fetch("http://localhost:5000/api/upload", {
+      const res = await fetch(`${API}/api/upload`, {
         method: "POST",
         body: formData,
       });
