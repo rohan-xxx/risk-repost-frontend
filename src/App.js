@@ -115,7 +115,7 @@ function App() {
 
   return (
     <div className="app">
-      <h1 className="title">📸 Cloud Image Gallery</h1>
+      <h1 className="title">📸 Risk Repost Image Hub</h1>
 
       {errorMessage && <div className="error-message">{errorMessage}</div>}
 
