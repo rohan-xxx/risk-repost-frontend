@@ -6,9 +6,11 @@ function App() {
   const [previewImage, setPreviewImage] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const REACT_APP_API_BASE = "https://risk-repost-backend.onrender.com";
 
+  // ✅ Fetch saved images on page load
   useEffect(() => {
     const fetchImages = async () => {
       try {
@@ -26,12 +28,15 @@ function App() {
       } catch (err) {
         console.error("Error fetching images:", err);
         setErrorMessage("Unable to load images. Please try again later.");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchImages();
   }, []);
 
+  // ✅ Upload handler
   const handleImageUpload = async (e) => {
     const files = e.target.files;
     if (!files || files.length === 0) {
@@ -61,6 +66,7 @@ function App() {
     }
   };
 
+  // ✅ Download logic
   const handleDownload = async (url) => {
     try {
       const response = await fetch(url, { mode: "cors" });
@@ -81,6 +87,7 @@ function App() {
     }
   };
 
+  // ✅ Modal preview
   const openPreview = (index) => {
     setCurrentIndex(index);
     setPreviewImage(images[index]);
@@ -88,6 +95,7 @@ function App() {
 
   const closePreview = () => setPreviewImage(null);
 
+  // ✅ Slideshow
   const nextImage = useCallback(() => {
     const nextIndex = (currentIndex + 1) % images.length;
     setCurrentIndex(nextIndex);
@@ -118,6 +126,7 @@ function App() {
       <h1 className="title">📸 Risk Repost Image Hub</h1>
 
       {errorMessage && <div className="error-message">{errorMessage}</div>}
+      {loading && <p style={{ textAlign: "center" }}>Loading images...</p>}
 
       <div className="upload-box">
         <label htmlFor="imageUpload" className="upload-label">
@@ -152,11 +161,17 @@ function App() {
       {previewImage && (
         <div className="modal-overlay" onClick={closePreview}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="nav-button left" onClick={prevImage}>❮</button>
+            <button className="nav-button left" onClick={prevImage}>
+              ❮
+            </button>
             <img src={previewImage} alt="preview" />
-            <button className="nav-button right" onClick={nextImage}>❯</button>
+            <button className="nav-button right" onClick={nextImage}>
+              ❯
+            </button>
             <div className="modal-buttons">
-              <button onClick={() => handleDownload(previewImage)}>Download</button>
+              <button onClick={() => handleDownload(previewImage)}>
+                Download
+              </button>
               <button onClick={closePreview}>Close</button>
             </div>
           </div>
