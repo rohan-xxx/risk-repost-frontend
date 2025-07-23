@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 
 function ImageUpload({ onUpload }) {
-  const API = "https://risk-repost-backend.onrender.com"; // ✅ Fixed: wrapped URL in quotes
-
+  const API = "https://risk-repost-backend.onrender.com";
   const [isUploading, setIsUploading] = useState(false);
 
   const handleChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
     const formData = new FormData();
-    formData.append("image", file);
+    for (let file of files) {
+      formData.append("image", file); // ✅ Field name matches backend
+    }
 
     try {
       setIsUploading(true);
@@ -26,12 +27,10 @@ function ImageUpload({ onUpload }) {
       }
 
       const data = await res.json();
+      const urls = Array.isArray(data.url) ? data.url : [data.url];
 
-      if (data.url) {
-        onUpload(data.url); // Send uploaded image URL to parent
-      } else {
-        alert("Upload failed: No URL returned");
-      }
+      // ✅ Notify parent of new images
+      if (onUpload) onUpload(urls);
     } catch (error) {
       console.error("Image upload error:", error);
       alert(`Upload error: ${error.message}`);
@@ -43,12 +42,13 @@ function ImageUpload({ onUpload }) {
   return (
     <div className="upload-box">
       <label htmlFor="fileInput" className="upload-label">
-        📤 {isUploading ? "Uploading..." : "Upload Image"}
+        📤 {isUploading ? "Uploading..." : "Upload Images"}
       </label>
       <input
         id="fileInput"
         type="file"
         accept="image/*"
+        multiple
         onChange={handleChange}
         style={{ display: "none" }}
         disabled={isUploading}
