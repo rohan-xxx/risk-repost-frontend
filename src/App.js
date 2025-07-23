@@ -8,23 +8,26 @@ function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const API_BASE = "https://risk-repost-backend.onrender.com";
+  const REACT_APP_API_BASE = "https://risk-repost-backend.onrender.com";
 
+  // ✅ Fetch saved images on page load
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const res = await fetch(`${API_BASE}/images`);
+        const res = await fetch(`${REACT_APP_API_BASE}/images`);
         if (!res.ok) throw new Error("Failed to fetch images");
 
         const data = await res.json();
-        if (Array.isArray(data.images)) {
-          setImages(data.images);
+        const urls = Array.isArray(data) ? data : data.images;
+
+        if (Array.isArray(urls)) {
+          setImages(urls);
         } else {
-          throw new Error("Invalid image data format");
+          throw new Error("Invalid image data format from backend");
         }
       } catch (err) {
-        console.error("Fetch error:", err);
-        setErrorMessage("Unable to load saved images.");
+        console.error("Error fetching images:", err);
+        setErrorMessage("Unable to load images. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -33,6 +36,7 @@ function App() {
     fetchImages();
   }, []);
 
+  // ✅ Upload handler
   const handleImageUpload = async (e) => {
     const files = e.target.files;
     if (!files || files.length === 0) {
@@ -42,41 +46,48 @@ function App() {
 
     const formData = new FormData();
     for (let file of files) {
-      formData.append("image", file); // match backend .array("image")
+      formData.append("image", file);
     }
 
     try {
-      const res = await fetch(`${API_BASE}/upload`, {
+      const res = await fetch(`${REACT_APP_API_BASE}/upload`, {
         method: "POST",
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Upload failed");
+      if (!res.ok) throw new Error("Upload request failed");
 
       const data = await res.json();
-      const uploaded = Array.isArray(data.url) ? data.url : [data.url];
-      setImages((prev) => [...prev, ...uploaded]);
-    } catch (err) {
-      console.error("Upload error:", err);
-      alert("Upload failed. Try again.");
+      const newUrls = Array.isArray(data.url) ? data.url : [data.url];
+      setImages((prev) => [...prev, ...newUrls]);
+    } catch (error) {
+      console.error("Upload failed:", error);
+      alert("Upload failed. Please try again.");
     }
   };
 
+  // ✅ Download logic
   const handleDownload = async (url) => {
     try {
-      const res = await fetch(url);
-      const blob = await res.blob();
+      const response = await fetch(url, { mode: "cors" });
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+
       const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
+      link.href = downloadUrl;
       link.download = "image.jpg";
+      document.body.appendChild(link);
       link.click();
-      URL.revokeObjectURL(link.href);
-    } catch (err) {
-      console.error("Download error:", err);
-      alert("Failed to download image.");
+      document.body.removeChild(link);
+
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error("Download failed:", error);
+      alert("Download failed.");
     }
   };
 
+  // ✅ Modal preview
   const openPreview = (index) => {
     setCurrentIndex(index);
     setPreviewImage(images[index]);
@@ -84,28 +95,30 @@ function App() {
 
   const closePreview = () => setPreviewImage(null);
 
+  // ✅ Slideshow
   const nextImage = useCallback(() => {
-    const next = (currentIndex + 1) % images.length;
-    setCurrentIndex(next);
-    setPreviewImage(images[next]);
+    const nextIndex = (currentIndex + 1) % images.length;
+    setCurrentIndex(nextIndex);
+    setPreviewImage(images[nextIndex]);
   }, [currentIndex, images]);
 
   const prevImage = useCallback(() => {
-    const prev = (currentIndex - 1 + images.length) % images.length;
-    setCurrentIndex(prev);
-    setPreviewImage(images[prev]);
+    const prevIndex = (currentIndex - 1 + images.length) % images.length;
+    setCurrentIndex(prevIndex);
+    setPreviewImage(images[prevIndex]);
   }, [currentIndex, images]);
 
   useEffect(() => {
-    const handleKeys = (e) => {
+    const handleKeyDown = (e) => {
       if (!previewImage) return;
+
       if (e.key === "ArrowRight") nextImage();
-      if (e.key === "ArrowLeft") prevImage();
-      if (e.key === "Escape") closePreview();
+      else if (e.key === "ArrowLeft") prevImage();
+      else if (e.key === "Escape") closePreview();
     };
 
-    window.addEventListener("keydown", handleKeys);
-    return () => window.removeEventListener("keydown", handleKeys);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [previewImage, nextImage, prevImage]);
 
   return (
@@ -132,7 +145,11 @@ function App() {
       <div className="gallery">
         {images.map((url, idx) => (
           <div className="image-card" key={idx}>
-            <img src={url} alt={`img-${idx}`} onClick={() => openPreview(idx)} />
+            <img
+              src={url}
+              alt={`upload-${idx}`}
+              onClick={() => openPreview(idx)}
+            />
             <div className="image-actions">
               <button onClick={() => handleDownload(url)}>Download</button>
               <button onClick={() => openPreview(idx)}>Zoom</button>
@@ -144,11 +161,17 @@ function App() {
       {previewImage && (
         <div className="modal-overlay" onClick={closePreview}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="nav-button left" onClick={prevImage}>❮</button>
+            <button className="nav-button left" onClick={prevImage}>
+              ❮
+            </button>
             <img src={previewImage} alt="preview" />
-            <button className="nav-button right" onClick={nextImage}>❯</button>
+            <button className="nav-button right" onClick={nextImage}>
+              ❯
+            </button>
             <div className="modal-buttons">
-              <button onClick={() => handleDownload(previewImage)}>Download</button>
+              <button onClick={() => handleDownload(previewImage)}>
+                Download
+              </button>
               <button onClick={closePreview}>Close</button>
             </div>
           </div>
