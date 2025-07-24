@@ -19,7 +19,8 @@ const ImageGallery = ({ images }) => {
       <div className="gallery">
         {images.map((src, i) => (
           <div className="image-card" key={i} onClick={() => openImage(src)}>
-            <img src={src} alt={`Image ${i}`} />
+            {/* ✅ Use a meaningful or generic description, no 'image' word */}
+            <img src={src} alt={`Artwork ${i + 1}`} />
           </div>
         ))}
       </div>
@@ -27,7 +28,8 @@ const ImageGallery = ({ images }) => {
       {selectedImage && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <img src={selectedImage} alt="Popup" />
+            {/* ✅ If image is decorative in modal, use empty alt */}
+            <img src={selectedImage} alt="" />
             <div className="modal-buttons">
               <button onClick={downloadImage}>Download</button>
               <button onClick={closeModal}>Close</button>
