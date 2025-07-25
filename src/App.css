@@ -1,198 +1,145 @@
 body {
   margin: 0;
   font-family: "Inter", sans-serif;
-  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   color: #f1f1f1;
   min-height: 100vh;
-}
-
-.title {
-  text-align: center;
-  font-size: clamp(1.8rem, 5vw, 2.5rem);
-  font-weight: bold;
-  margin: 2rem 1rem 1rem;
-  color: #ffffff;
-  letter-spacing: 1px;
+  overflow-x: hidden;
 }
 
 .hero-section {
-  background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
-  padding: 20px 1rem 20px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 40px 1rem;
   text-align: center;
-  border-bottom: 2px solid rgba(255,255,255,0.05);
-  box-shadow: inset 0 0 80px rgba(255,255,255,0.02);
+  backdrop-filter: blur(12px);
+  border-bottom: 2px solid rgba(255,255,255,0.15);
+  box-shadow: inset 0 0 60px rgba(255,255,255,0.03);
 }
-.hero-content {
-  max-width: 800px;
-  margin: 0 auto;
-  animation: fadeInUp 1.2s ease-in-out;
-}
+
 .hero-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(2rem, 6vw, 3.2rem);
+  font-size: clamp(2.2rem, 6vw, 3.5rem);
   background: linear-gradient(to right, #00f0ff, #00ff9d);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: 2px;
-  text-shadow: 0 0 10px rgba(0,255,255,0.2);
-  margin-bottom: 10px;
+  text-shadow: 0 0 8px rgba(0,255,255,0.2);
+  font-weight: bold;
 }
+
 .hero-subtitle {
-  font-family: 'Outfit', sans-serif;
-  font-size: clamp(1rem, 2.5vw, 1.3rem);
   color: #dcdcdc;
-  margin-bottom: 25px;
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
   opacity: 0.85;
 }
 
-.upload-box {
-  text-align: center;
-  margin: 2rem 1rem;
-}
-.upload-label,
-.upload-btn {
-  background: rgba(255,255,255,0.15);
-  padding: 12px 24px;
-  border-radius: 12px;
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-  backdrop-filter: blur(8px);
-  transition: background 0.3s ease, transform 0.3s ease;
-}
-.upload-label:hover,
-.upload-btn:hover {
-  background: rgba(255,255,255,0.25);
-  transform: scale(1.05);
-}
 .upload-btn {
   background: linear-gradient(to right, #00f0ff, #00ff9d);
   color: #000;
-  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
   border: none;
   border-radius: 50px;
   padding: 12px 28px;
+  backdrop-filter: blur(8px);
   box-shadow: 0 4px 20px rgba(0,255,255,0.3);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
+
 .upload-btn:hover {
-  box-shadow: 0 6px 25px rgba(0,255,255,0.5);
+  box-shadow: 0 6px 25px rgba(0,255,255,0.6);
+  transform: scale(1.05);
 }
 
 .gallery {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 47px; /* 👈 This sets the space between grid items */
+  gap: 48px;
   padding: 2rem 1rem;
-  margin: 0 auto;
-  width: 100%;
-  box-sizing: border-box;
 }
-
 
 .image-card {
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 12px;
-  padding: 12px;
-  display: flex;
-  gap:20px;
-  flex-direction: column;
-  align-items: center;
-  box-shadow: 0 0 10px rgba(255,255,255,0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  width: 100%;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s, box-shadow 0.3s;
 }
+
 .image-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 20px 45px rgba(0,0,0,0.4);
+  box-shadow: 0 20px 45px rgba(0,255,255,0.1);
 }
+
 .image-card img {
   width: 100%;
   height: auto;
-  aspect-ratio: 4/3;
   object-fit: cover;
-  border-radius: 8px;
+  aspect-ratio: 4/3;
+  border-radius: 10px;
+  transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;
   cursor: pointer;
-  transition: transform 0.4s ease-in-out, filter 0.4s ease-in-out;
 }
+
 .image-card:hover img {
-  transform: scale(1.05);
+  transform: scale(1.04);
   filter: brightness(1.1);
 }
 
-.image-actions,
 .card-buttons {
   display: flex;
   justify-content: center;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 10px;
 }
-.image-actions button,
+
 .card-buttons button {
   background: rgba(255,255,255,0.15);
   border: none;
-  padding: 6px 14px;
+  padding: 8px 16px;
+  border-radius: 12px;
   color: #fff;
-  font-weight: 600;
-  border-radius: 10px;
   cursor: pointer;
-  backdrop-filter: blur(4px);
-  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  backdrop-filter: blur(6px);
+  transition: background 0.3s ease, transform 0.3s ease;
 }
-.image-actions button:hover,
+
 .card-buttons button:hover {
   background: rgba(255,255,255,0.25);
-  box-shadow: 0 0 10px #00f2fe, 0 0 20px #4facfe;
-  border-color: #00f2fe;
   transform: scale(1.06);
 }
 
 .pagination {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
   gap: 18px;
-  margin: 50px 1rem;
-  font-family: "Segoe UI", sans-serif;
+  margin: 40px 1rem;
 }
+
 .pagination button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 50px;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
   color: #fff;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-  box-shadow: 0 0 12px rgba(0,242,254,0.2);
-  transition: background 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 50px;
+  backdrop-filter: blur(8px);
+  transition: background 0.4s ease, transform 0.4s ease;
 }
+
 .pagination button:hover:not(:disabled) {
   background: linear-gradient(to right, #00f2fe, #4facfe);
   color: #000;
   transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(0,242,254,0.6);
 }
-.pagination button:disabled {
-  background: rgba(255,255,255,0.05);
-  color: #777;
-  border: 1px solid rgba(255,255,255,0.05);
-  box-shadow: none;
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+
 .pagination span {
   font-size: 16px;
-  color: #fff;
-  font-weight: 500;
-  padding: 10px 18px;
-  border-radius: 30px;
+  font-weight: 600;
   background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 8px 16px;
+  border-radius: 30px;
   backdrop-filter: blur(6px);
-  border: 1px solid rgba(255,255,255,0.1);
 }
 
 .modal-overlay {
@@ -205,74 +152,74 @@ body {
   z-index: 9999;
   padding: 20px;
 }
+
 .modal-content {
+  background: rgba(255,255,255,0.06);
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgba(0,255,255,0.1);
+  backdrop-filter: blur(14px);
   max-width: 95%;
   max-height: 95%;
-  position: relative;
   text-align: center;
+  position: relative;
 }
+
 .modal-content img {
   max-width: 100%;
-  max-height: 87vh;
-  height: auto;
+  max-height: 80vh;
   border-radius: 10px;
-  box-shadow: 0 0 35px rgba(255,255,255,0.25);
-  transition: transform 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.15);
 }
-.modal-content img:hover {
-  transform: scale(1.02);
-}
+
 .modal-buttons {
-  margin-top: 1rem;
   display: flex;
   justify-content: center;
-  gap: 1rem;
-  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 1rem;
 }
+
 .modal-buttons button {
-  padding: 10px 18px;
   background: rgba(255,255,255,0.2);
   color: white;
   border: none;
-  font-weight: bold;
-  border-radius: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
   cursor: pointer;
   transition: background 0.3s;
 }
+
 .modal-buttons button:hover {
   background: rgba(255,255,255,0.35);
 }
 
-.error-message {
-  text-align: center;
-  color: #ff4c4c;
-  font-weight: bold;
-  margin: 1rem;
-}
 .nav-button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   width: 44px;
   height: 44px;
-  border: none;
-  border-radius: 50%;
   background: rgba(255,255,255,0.15);
   color: #fff;
   font-size: 1.8rem;
+  border: none;
+  border-radius: 50%;
   cursor: pointer;
   backdrop-filter: blur(6px);
-  transition: transform 0.25s ease-in-out, background 0.25s ease-in-out;
-  z-index: 10;
+  transition: background 0.3s ease, transform 0.3s ease;
 }
+
 .nav-button:hover {
   background: rgba(255,255,255,0.3);
   transform: translateY(-50%) scale(1.1);
 }
+
 .nav-button.left { left: 20px; }
 .nav-button.right { right: 20px; }
 
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+.error-message {
+  text-align: center;
+  color: #ff4c4c;
+  font-weight: bold;
+  margin: 1rem;
 }
