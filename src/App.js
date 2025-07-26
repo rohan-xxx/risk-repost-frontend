@@ -15,16 +15,22 @@ function App() {
 
   const API_BASE = "https://risk-repost-backend.onrender.com";
 
-  // ✅ Fetch images and append
-  const fetchImages = async (page) => {
+  // ✅ Fetch images (for pagination OR lazy loading)
+  const fetchImages = async (page, append = false) => {
     try {
       const res = await fetch(`${API_BASE}/images?page=${page}`);
       if (!res.ok) throw new Error("Failed to fetch images");
       const data = await res.json();
 
-      setAllImages((prev) => [...prev, ...data.images]);
+      if (append) {
+        setAllImages((prev) => [...prev, ...data.images]);
+      } else {
+        setAllImages(data.images);
+      }
+
       setTotalPages(data.totalPages);
       setCurrentPage(data.currentPage);
+      setErrorMessage("");
     } catch (err) {
       console.error(err);
       setErrorMessage("Error loading images.");
@@ -35,7 +41,7 @@ function App() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      await fetchImages(1);
+      await fetchImages(1, false);
       setLoading(false);
     })();
   }, []);
@@ -50,15 +56,18 @@ function App() {
     setPendingNext(false);
   };
 
-  // ✅ Prefetch next page early
+  // ✅ Prefetch next page for modal navigation
   useEffect(() => {
-    if (currentPage < totalPages && allImages.length - currentIndex <= 3 && !isFetchingMore) {
+    if (
+      currentPage < totalPages &&
+      allImages.length - currentIndex <= 3 &&
+      !isFetchingMore
+    ) {
       setIsFetchingMore(true);
-      fetchImages(currentPage + 1).then(() => setIsFetchingMore(false));
+      fetchImages(currentPage + 1, true).then(() => setIsFetchingMore(false));
     }
   }, [currentIndex, allImages.length, currentPage, totalPages, isFetchingMore]);
 
-  // ✅ Handle next navigation (safe)
   const nextImage = useCallback(() => {
     if (!allImages.length) return;
     const nextIndex = currentIndex + 1;
@@ -68,14 +77,13 @@ function App() {
       setPreviewImage(allImages[nextIndex]);
     } else if (currentPage < totalPages && !isFetchingMore) {
       setIsFetchingMore(true);
-      setPendingNext(true); // Wait until new images arrive
-      fetchImages(currentPage + 1).then(() => {
+      setPendingNext(true);
+      fetchImages(currentPage + 1, true).then(() => {
         setIsFetchingMore(false);
       });
     }
   }, [currentIndex, allImages, currentPage, totalPages, isFetchingMore]);
 
-  // ✅ When new images are appended, continue navigation if pending
   useEffect(() => {
     if (pendingNext && allImages.length > currentIndex + 1) {
       const nextIndex = currentIndex + 1;
@@ -92,7 +100,7 @@ function App() {
     setPreviewImage(allImages[prevIndex]);
   }, [currentIndex, allImages]);
 
-  // ✅ Swipe
+  // ✅ Swipe support
   const handleTouchStart = (e) => setTouchStartX(e.touches[0].clientX);
   const handleTouchEnd = (e) => {
     const diff = e.changedTouches[0].clientX - touchStartX;
@@ -100,7 +108,7 @@ function App() {
     if (diff < -50) nextImage();
   };
 
-  // ✅ Keyboard
+  // ✅ Keyboard support
   useEffect(() => {
     if (!previewImage) return;
     const keyHandler = (e) => {
@@ -145,7 +153,7 @@ function App() {
 
       setAllImages([]);
       setCurrentPage(1);
-      await fetchImages(1);
+      await fetchImages(1, false);
     } catch (err) {
       console.error(err);
       alert("Upload failed");
@@ -176,21 +184,48 @@ function App() {
       {loading && allImages.length === 0 ? (
         <p style={{ textAlign: "center" }}>Loading images...</p>
       ) : (
-        <div className="gallery">
-          {allImages.map((url, idx) => (
-            <div className="image-card" key={idx}>
-              <img
-                src={url}
-                alt={`upload-${idx}`}
-                onClick={() => openPreview(idx)}
-              />
-              <div className="card-buttons">
-                <button onClick={() => openPreview(idx)}>🔍 Zoom</button>
-                <button onClick={() => downloadImage(url)}>⬇ Download</button>
+        <>
+          <div className="gallery">
+            {allImages.map((url, idx) => (
+              <div className="image-card" key={idx}>
+                <img
+                  src={url}
+                  alt={`upload-${idx}`}
+                  onClick={() => openPreview(idx)}
+                />
+                <div className="card-buttons">
+                  <button onClick={() => openPreview(idx)}>🔍 Zoom</button>
+                  <button onClick={() => downloadImage(url)}>⬇ Download</button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+
+          {/* ✅ Pagination Buttons */}
+          <div className="pagination">
+            <button
+              onClick={() => {
+                setAllImages([]);
+                fetchImages(currentPage - 1, false);
+              }}
+              disabled={currentPage === 1}
+            >
+              ⬅ Prev
+            </button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => {
+                setAllImages([]);
+                fetchImages(currentPage + 1, false);
+              }}
+              disabled={currentPage === totalPages}
+            >
+              Next ➡
+            </button>
+          </div>
+        </>
       )}
 
       {previewImage && (
