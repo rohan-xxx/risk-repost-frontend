@@ -2,58 +2,115 @@ import React, { useEffect, useState, useCallback } from "react";
 import "./App.css";
 
 function App() {
-  const [images, setImages] = useState([]);
+  const [allImages, setAllImages] = useState([]);
   const [previewImage, setPreviewImage] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [touchStartX, setTouchStartX] = useState(0);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [pendingNext, setPendingNext] = useState(false);
 
   const API_BASE = "https://risk-repost-backend.onrender.com";
 
+  // ✅ Fetch images and append
   const fetchImages = async (page) => {
     try {
-      setLoading(true);
       const res = await fetch(`${API_BASE}/images?page=${page}`);
       if (!res.ok) throw new Error("Failed to fetch images");
       const data = await res.json();
-      setImages(data.images);
-      setCurrentPage(data.currentPage);
+
+      setAllImages((prev) => [...prev, ...data.images]);
       setTotalPages(data.totalPages);
-      setErrorMessage("");
+      setCurrentPage(data.currentPage);
     } catch (err) {
-      console.error("Error fetching images:", err);
-      setErrorMessage("Something went wrong while loading images.");
-    } finally {
-      setLoading(false);
+      console.error(err);
+      setErrorMessage("Error loading images.");
     }
   };
 
+  // ✅ Initial load
   useEffect(() => {
-    fetchImages(currentPage);
-  }, [currentPage]);
+    (async () => {
+      setLoading(true);
+      await fetchImages(1);
+      setLoading(false);
+    })();
+  }, []);
 
   const openPreview = (index) => {
     setCurrentIndex(index);
-    setPreviewImage(images[index]);
+    setPreviewImage(allImages[index]);
   };
 
-  const closePreview = () => setPreviewImage(null);
+  const closePreview = () => {
+    setPreviewImage(null);
+    setPendingNext(false);
+  };
 
+  // ✅ Prefetch next page early
+  useEffect(() => {
+    if (currentPage < totalPages && allImages.length - currentIndex <= 3 && !isFetchingMore) {
+      setIsFetchingMore(true);
+      fetchImages(currentPage + 1).then(() => setIsFetchingMore(false));
+    }
+  }, [currentIndex, allImages.length, currentPage, totalPages, isFetchingMore]);
+
+  // ✅ Handle next navigation (safe)
   const nextImage = useCallback(() => {
-    if (!images.length) return;
-    const nextIndex = (currentIndex + 1) % images.length;
-    setCurrentIndex(nextIndex);
-    setPreviewImage(images[nextIndex]);
-  }, [currentIndex, images]);
+    if (!allImages.length) return;
+    const nextIndex = currentIndex + 1;
+
+    if (nextIndex < allImages.length) {
+      setCurrentIndex(nextIndex);
+      setPreviewImage(allImages[nextIndex]);
+    } else if (currentPage < totalPages && !isFetchingMore) {
+      setIsFetchingMore(true);
+      setPendingNext(true); // Wait until new images arrive
+      fetchImages(currentPage + 1).then(() => {
+        setIsFetchingMore(false);
+      });
+    }
+  }, [currentIndex, allImages, currentPage, totalPages, isFetchingMore]);
+
+  // ✅ When new images are appended, continue navigation if pending
+  useEffect(() => {
+    if (pendingNext && allImages.length > currentIndex + 1) {
+      const nextIndex = currentIndex + 1;
+      setCurrentIndex(nextIndex);
+      setPreviewImage(allImages[nextIndex]);
+      setPendingNext(false);
+    }
+  }, [allImages, pendingNext, currentIndex]);
 
   const prevImage = useCallback(() => {
-    if (!images.length) return;
-    const prevIndex = (currentIndex - 1 + images.length) % images.length;
+    if (!allImages.length) return;
+    const prevIndex = (currentIndex - 1 + allImages.length) % allImages.length;
     setCurrentIndex(prevIndex);
-    setPreviewImage(images[prevIndex]);
-  }, [currentIndex, images]);
+    setPreviewImage(allImages[prevIndex]);
+  }, [currentIndex, allImages]);
+
+  // ✅ Swipe
+  const handleTouchStart = (e) => setTouchStartX(e.touches[0].clientX);
+  const handleTouchEnd = (e) => {
+    const diff = e.changedTouches[0].clientX - touchStartX;
+    if (diff > 50) prevImage();
+    if (diff < -50) nextImage();
+  };
+
+  // ✅ Keyboard
+  useEffect(() => {
+    if (!previewImage) return;
+    const keyHandler = (e) => {
+      if (e.key === "ArrowRight") nextImage();
+      if (e.key === "ArrowLeft") prevImage();
+      if (e.key === "Escape") closePreview();
+    };
+    window.addEventListener("keydown", keyHandler);
+    return () => window.removeEventListener("keydown", keyHandler);
+  }, [previewImage, nextImage, prevImage]);
 
   const downloadImage = (url) => {
     fetch(url)
@@ -75,7 +132,7 @@ function App() {
 
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
-      formData.append("image", files[i]); // use "image" only if your backend accepts multiple with same field
+      formData.append("image", files[i]);
     }
 
     try {
@@ -84,9 +141,11 @@ function App() {
         method: "POST",
         body: formData,
       });
-
       if (!res.ok) throw new Error("Upload failed");
-      await fetchImages(currentPage); // Refresh image list
+
+      setAllImages([]);
+      setCurrentPage(1);
+      await fetchImages(1);
     } catch (err) {
       console.error(err);
       alert("Upload failed");
@@ -98,68 +157,50 @@ function App() {
   return (
     <div className="App">
       <div className="hero-section">
-        <div className="hero-content">
-          <h1 className="hero-title">📸 Risk Repost Image Hub</h1>
-          <p className="hero-subtitle">Upload. Explore. Inspire.</p>
-          <label className="upload-btn">
-            Upload Your Image 🚀
-            <input
-              id="fileInput"
-              type="file"
-              accept="image/*"
-              multiple
-              style={{ display: "none" }}
-              onChange={handleFileChange}
-            />
-          </label>
-        </div>
+        <h1 className="hero-title">📸 Risk Repost Image Hub</h1>
+        <p className="hero-subtitle">Upload. Explore. Inspire.</p>
+        <label className="upload-btn">
+          Upload Your Image 🚀
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+          />
+        </label>
       </div>
 
       {errorMessage && <div className="error-message">{errorMessage}</div>}
 
-      {loading ? (
+      {loading && allImages.length === 0 ? (
         <p style={{ textAlign: "center" }}>Loading images...</p>
       ) : (
-        <>
-          <div className="gallery">
-            {images.map((url, idx) => (
-              <div className="image-card" key={idx}>
-                <img
-                  src={url}
-                  alt={`upload-${idx}`}
-                  onClick={() => openPreview(idx)}
-                />
-                <div className="card-buttons">
-                  <button onClick={() => openPreview(idx)}>🔍 Zoom</button>
-                  <button onClick={() => downloadImage(url)}>⬇ Download</button>
-                </div>
+        <div className="gallery">
+          {allImages.map((url, idx) => (
+            <div className="image-card" key={idx}>
+              <img
+                src={url}
+                alt={`upload-${idx}`}
+                onClick={() => openPreview(idx)}
+              />
+              <div className="card-buttons">
+                <button onClick={() => openPreview(idx)}>🔍 Zoom</button>
+                <button onClick={() => downloadImage(url)}>⬇ Download</button>
               </div>
-            ))}
-          </div>
-
-          <div className="pagination">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              ⬅ Prev
-            </button>
-            <span>
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-              disabled={currentPage === totalPages}
-            >
-              Next ➡
-            </button>
-          </div>
-        </>
+            </div>
+          ))}
+        </div>
       )}
 
       {previewImage && (
         <div className="modal-overlay" onClick={closePreview}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
             <button className="nav-button left" onClick={prevImage}>
               ❮
             </button>
@@ -168,9 +209,7 @@ function App() {
               ❯
             </button>
             <div className="modal-buttons">
-              <button onClick={() => downloadImage(previewImage)}>
-                ⬇ Download
-              </button>
+              <button onClick={() => downloadImage(previewImage)}>⬇ Download</button>
               <button onClick={closePreview}>✖ Close</button>
             </div>
           </div>
