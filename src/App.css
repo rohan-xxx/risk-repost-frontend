@@ -1,3 +1,4 @@
+/* Keep existing global styles as they are */
 body {
   margin: 0;
   font-family: "Inter", sans-serif;
@@ -7,13 +8,14 @@ body {
   overflow-x: hidden;
 }
 
+/* Hero Section */
 .hero-section {
   background: rgba(255, 255, 255, 0.05);
   padding: 40px 1rem;
   text-align: center;
   backdrop-filter: blur(12px);
-  border-bottom: 2px solid rgba(255,255,255,0.15);
-  box-shadow: inset 0 0 60px rgba(255,255,255,0.03);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 0 60px rgba(255, 255, 255, 0.03);
 }
 
 .hero-title {
@@ -21,7 +23,7 @@ body {
   background: linear-gradient(to right, #00f0ff, #00ff9d);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 8px rgba(0,255,255,0.2);
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
   font-weight: bold;
 }
 
@@ -31,6 +33,7 @@ body {
   opacity: 0.85;
 }
 
+/* Upload Button */
 .upload-btn {
   background: linear-gradient(to right, #00f0ff, #00ff9d);
   color: #000;
@@ -39,15 +42,16 @@ body {
   border-radius: 50px;
   padding: 12px 28px;
   backdrop-filter: blur(8px);
-  box-shadow: 0 4px 20px rgba(0,255,255,0.3);
+  box-shadow: 0 4px 20px rgba(0, 255, 255, 0.3);
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .upload-btn:hover {
-  box-shadow: 0 6px 25px rgba(0,255,255,0.6);
+  box-shadow: 0 6px 25px rgba(0, 255, 255, 0.6);
   transform: scale(1.05);
 }
 
+/* Gallery */
 .gallery {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -58,23 +62,23 @@ body {
 }
 
 .image-card {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
   padding: 16px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(10px);
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .image-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 20px 45px rgba(0,255,255,0.1);
+  box-shadow: 0 20px 45px rgba(0, 255, 255, 0.1);
 }
 
 .image-card img {
   width: 100%;
-  height: 300px;   /* ~3× larger than a typical ~240px height */
+  height: 300px;
   object-fit: cover;
   aspect-ratio: 16 / 9;
   border-radius: 10px;
@@ -82,12 +86,12 @@ body {
   cursor: pointer;
 }
 
-
 .image-card:hover img {
   transform: scale(1.04);
   filter: brightness(1.1);
 }
 
+/* Buttons */
 .card-buttons {
   display: flex;
   justify-content: center;
@@ -96,7 +100,7 @@ body {
 }
 
 .card-buttons button {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
   border: none;
   padding: 8px 16px;
   border-radius: 12px;
@@ -107,10 +111,11 @@ body {
 }
 
 .card-buttons button:hover {
-  background: rgba(255,255,255,0.25);
+  background: rgba(255, 255, 255, 0.25);
   transform: scale(1.06);
 }
 
+/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
@@ -119,8 +124,8 @@ body {
 }
 
 .pagination button {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: #fff;
   font-weight: 600;
   padding: 10px 20px;
@@ -138,13 +143,14 @@ body {
 .pagination span {
   font-size: 16px;
   font-weight: 600;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 8px 16px;
   border-radius: 30px;
   backdrop-filter: blur(6px);
 }
 
+/* Error */
 .error-message {
   text-align: center;
   color: #ff4c4c;
@@ -152,77 +158,245 @@ body {
   margin: 1rem;
 }
 
-/* FULL-SCREEN MODAL */
+/* ✅ Modal Overlay */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.95);
+  background: rgba(0, 0, 0, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
+  padding: 10px;
 }
 
-.modal-content {
-  width: 100%;
-  height: 100%;
+.modal-instagram {
+  display: flex;
+  flex-direction: row;
+  width: min(95%, 1200px);
+  height: 90%;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+}
+
+.modal-left {
+  flex: 2;
+  background: #000;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
 }
 
-.modal-content img {
-  width: 100%;
-  height: 100%;
+.modal-left img {
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
 }
 
+/* Navigation Buttons */
 .nav-button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  font-size: 2rem;
   border: none;
   border-radius: 50%;
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: bold;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease, transform 0.2s ease;
+  z-index: 100;
 }
 
-.nav-button.left { left: 20px; }
-.nav-button.right { right: 20px; }
+.nav-button:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: translateY(-50%) scale(1.1);
+}
 
-.modal-buttons {
-  position: absolute;
-  bottom: 20px;
+.nav-button.left {
+  left: 10px;
+}
+
+.nav-button.right {
+  right: 10px;
+}
+
+.modal-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #fafafa;
+  color: #111;
+  padding: 15px;
+  border-left: 1px solid #ddd;
+  max-height: 100%;
+}
+
+.modal-right h3 {
+  font-size: 1rem;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.comments-section {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 5px;
+  margin-bottom: 10px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.comments-section p {
+  background: #eee;
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: #222;
+}
+
+textarea {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+  resize: none;
+  margin-bottom: 8px;
 }
 
-.modal-buttons button {
-  background: rgba(255,255,255,0.2);
-  color: white;
+textarea::placeholder {
+  color: #888;
+}
+
+.modal-right button {
+  background: #0095f6;
+  color: #fff;
   border: none;
-  padding: 10px 18px;
-  border-radius: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: bold;
   cursor: pointer;
+  
+
 }
 
-.modal-buttons button:hover {
-  background: rgba(255,255,255,0.4);
+.modal-right button:hover {
+  background: #0078c9;
 }
 
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-  margin: 40px auto;  /* auto centers horizontally */
-  position: relative;
-  z-index: 1000;
+.close-btn {
+  margin-top: 10px;
+  background: #ff4444 !important;
 }
+
+.close-btn:hover {
+  background: #cc0000 !important;
+}
+
+/* Scrollbar */
+.comments-section::-webkit-scrollbar {
+  width: 6px;
+}
+.comments-section::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border-radius: 6px;
+}
+.comments-section::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+/* ✅ Responsive Modal */
+@media (max-width: 768px) {
+  .modal-instagram {
+    flex-direction: column;
+    width: 95%;
+    height: 92%;
+  }
+
+  .modal-left {
+    width: 100%;
+    height: 65%;
+  }
+
+  .modal-right {
+    width: 100%;
+    height: 35%;
+    padding: 10px;
+    overflow-y: auto;
+  }
+
+  .nav-button {
+    width: 35px;
+    height: 35px;
+    font-size: 1.4rem;
+  }
+
+  textarea {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  .modal-right button {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+   
+  }
+
+  .close-btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    margin-top: 5px;
+  }
+}
+
+/* ✅ Extra Small Devices (Phones <480px) */
+@media (max-width: 480px) {
+  .modal-instagram {
+    width: 96%;
+    height: 90%;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .modal-right h3 {
+    font-size: 0.85rem;
+  }
+
+  .modal-right textarea {
+    padding: 6px;
+    font-size: 0.75rem;
+    height: 20px;
+    margin-bottom: 5px;
+  }
+
+  /* Wrap both buttons in a container */
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;  /* space between Post and Close */
+    gap: 2px;
+    margin-top: 5px;
+    width: 20px;
+  }
+
+  .modal-buttons button {
+    flex: 1;            /* equal width */
+    padding: 2px 8px;
+    font-size: 0.75rem;
+  }
+
+  .comments-section {
+    max-height: 90px;
+  }
+}
+
