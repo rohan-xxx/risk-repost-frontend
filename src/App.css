@@ -400,3 +400,123 @@ textarea::placeholder {
   }
 }
 
+
+.like-button {
+  transition: transform 0.2s ease;
+  font-size: 1rem;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  background: none;
+}
+
+.like-button.clicked {
+  animation: pop 0.3s ease;
+  color: red;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+
+.like-button {
+  transition: transform 0.2s ease;
+  font-size: 1rem;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  background: none;
+}
+
+.like-button.clicked {
+  animation: pop 0.3s ease;
+  color: red;
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+.image-wrapper {
+  position: relative;
+}
+
+.heart-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 80px;
+  opacity: 0;
+  animation: heart-fade 0.8s ease forwards;
+  pointer-events: none;
+  user-select: none;
+}
+
+@keyframes heart-fade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  30% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.like-button {
+  transition: transform 0.2s ease;
+  font-size: 1rem;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  background: none;
+}
+
+.like-button.clicked {
+  animation: pop 0.3s ease;
+  color: red;
+}
+
+@keyframes pop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+.image-wrapper {
+  position: relative;
+}
+
+.heart-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 80px;
+  opacity: 0;
+  animation: heart-fade 0.8s ease forwards;
+  pointer-events: none;
+  user-select: none;
+}
+
+@keyframes heart-fade {
+  0% { opacity: 0; transform: scale(0.5) translate(-50%, -50%); }
+  30% { opacity: 1; transform: scale(1.2) translate(-50%, -50%); }
+  100% { opacity: 0; transform: scale(1) translate(-50%, -50%); }
+}
