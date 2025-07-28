@@ -109,7 +109,6 @@ function App() {
     setPendingNext(false);
   };
 
-  // ✅ Prevent background scroll when modal is open
   useEffect(() => {
     if (previewImage) {
       document.body.style.overflow = "hidden";
@@ -222,9 +221,11 @@ function App() {
       });
       if (!res.ok) throw new Error("Upload failed");
 
-      setAllImages([]);
-      setCurrentPage(1);
-      await fetchImages(1, false);
+      const uploadedData = await res.json();
+
+      // ✅ Prepend new images to the gallery
+      setAllImages((prev) => [...uploadedData.images, ...prev]);
+
     } catch (err) {
       console.error(err);
       alert("Upload failed");
@@ -335,7 +336,6 @@ function App() {
                 placeholder="Add a comment..."
               />
               <button onClick={submitComment}>Post</button>
-
               <button className="close-btn" onClick={closePreview}>
                 ✖ Close
               </button>
