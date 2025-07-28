@@ -16,7 +16,7 @@ function App() {
   const [commentText, setCommentText] = useState("");
   const [selectedImageId, setSelectedImageId] = useState(null);
 
-  const API_BASE = "http://localhost:5000";
+  const API_BASE = "https://risk-repost-backend.onrender.com";
 
   const fetchImages = async (page, append = false) => {
     try {
