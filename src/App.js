@@ -10,12 +10,12 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [touchStartX, setTouchStartX] = useState(0);
-  const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [pendingNext, setPendingNext] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [selectedImageId, setSelectedImageId] = useState(null);
   const [clickedLikeIndex, setClickedLikeIndex] = useState(null);
   const [showHeart, setShowHeart] = useState(false);
+  const [inputPage, setInputPage] = useState("");
   let lastTap = 0;
 
   const API_BASE = "https://risk-repost-backend.onrender.com";
@@ -32,6 +32,11 @@ function App() {
       setAllImages((prev) => (append ? [...prev, ...formatted] : formatted));
       setTotalPages(data.totalPages);
       setCurrentPage(data.currentPage);
+
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set("page", data.currentPage);
+      window.history.replaceState(null, "", newUrl.toString());
+
       setErrorMessage("");
     } catch {
       setErrorMessage("Error loading images.");
@@ -41,7 +46,9 @@ function App() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      await fetchImages(1, false);
+      const params = new URLSearchParams(window.location.search);
+      const savedPage = Number(params.get("page")) || 1;
+      await fetchImages(savedPage, false);
       setLoading(false);
     })();
   }, []);
@@ -121,17 +128,6 @@ function App() {
     document.body.style.overflow = previewImage ? "hidden" : "auto";
   }, [previewImage]);
 
-  useEffect(() => {
-    if (
-      currentPage < totalPages &&
-      allImages.length - currentIndex <= 3 &&
-      !isFetchingMore
-    ) {
-      setIsFetchingMore(true);
-      fetchImages(currentPage + 1, true).then(() => setIsFetchingMore(false));
-    }
-  }, [currentIndex, allImages.length, currentPage, totalPages, isFetchingMore]);
-
   const nextImage = useCallback(() => {
     const nextIndex = currentIndex + 1;
     if (nextIndex < allImages.length) {
@@ -208,23 +204,89 @@ function App() {
       {loading && allImages.length === 0 ? (
         <p style={{ textAlign: "center" }}>Loading images...</p>
       ) : (
-        <div className="gallery">
-          {allImages.map((img, idx) => (
-            <div className="image-card" key={img.id}>
-              <img src={img.url} alt="" onClick={() => openPreview(idx)} />
-              <div className="card-buttons">
-                <button
-                  className={`like-button ${clickedLikeIndex === idx ? "clicked" : ""}`}
-                  onClick={() => handleLike(img.id, idx)}
-                >
-                  ❤️ {img.likes}
-                </button>
-                <button onClick={() => openPreview(idx)}>💬 Comments</button>
-                <button onClick={() => window.open(img.url)}>⬇ Download</button>
+        <>
+          <div className="gallery">
+            {allImages.map((img, idx) => (
+              <div className="image-card" key={img.id}>
+                <img src={img.url} alt="" onClick={() => openPreview(idx)} />
+                <div className="card-buttons">
+                  <button
+                    className={`like-button ${
+                      clickedLikeIndex === idx ? "clicked" : ""
+                    }`}
+                    onClick={() => handleLike(img.id, idx)}
+                  >
+                    ❤️ {img.likes}
+                  </button>
+                  <button onClick={() => openPreview(idx)}>💬 Comments</button>
+                  <button onClick={() => window.open(img.url)}>⬇ Download</button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+
+          <div className="pagination-controls">
+            <button
+              className="pagination-btn"
+              onClick={() => {
+                if (currentPage > 1) {
+                  setLoading(true);
+                  fetchImages(currentPage - 1).then(() => setLoading(false));
+                }
+              }}
+              disabled={currentPage === 1}
+            >
+              ◀ Previous
+            </button>
+
+            <span className="page-info">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <input
+              type="number"
+              min="1"
+              max={totalPages}
+              placeholder="Go to page"
+              value={inputPage}
+              onChange={(e) => setInputPage(e.target.value)}
+              className="page-input"
+              style={{ marginLeft: "10px", padding: "5px", width: "80px" }}
+            />
+            <button
+              className="pagination-btn"
+              onClick={() => {
+                const targetPage = Number(inputPage);
+                if (
+                  !isNaN(targetPage) &&
+                  targetPage >= 1 &&
+                  targetPage <= totalPages
+                ) {
+                  setLoading(true);
+                  fetchImages(targetPage).then(() => {
+                    setLoading(false);
+                    setInputPage(""); // clear after jump
+                  });
+                }
+              }}
+            >
+              Go
+            </button>
+
+            <button
+              className="pagination-btn"
+              onClick={() => {
+                if (currentPage < totalPages) {
+                  setLoading(true);
+                  fetchImages(currentPage + 1).then(() => setLoading(false));
+                }
+              }}
+              disabled={currentPage === totalPages}
+            >
+              Next ▶
+            </button>
+          </div>
+        </>
       )}
 
       {previewImage && (

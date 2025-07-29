@@ -115,40 +115,6 @@ body {
   transform: scale(1.06);
 }
 
-/* Pagination */
-.pagination {
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-  margin: 40px 1rem;
-}
-
-.pagination button {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  font-weight: 600;
-  padding: 10px 20px;
-  border-radius: 50px;
-  backdrop-filter: blur(8px);
-  transition: background 0.4s ease, transform 0.4s ease;
-}
-
-.pagination button:hover:not(:disabled) {
-  background: linear-gradient(to right, #00f2fe, #4facfe);
-  color: #000;
-  transform: scale(1.05);
-}
-
-.pagination span {
-  font-size: 16px;
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 8px 16px;
-  border-radius: 30px;
-  backdrop-filter: blur(6px);
-}
 
 /* Error */
 .error-message {
@@ -519,4 +485,66 @@ textarea::placeholder {
   0% { opacity: 0; transform: scale(0.5) translate(-50%, -50%); }
   30% { opacity: 1; transform: scale(1.2) translate(-50%, -50%); }
   100% { opacity: 0; transform: scale(1) translate(-50%, -50%); }
+}
+
+
+.page-input {
+  width: 90px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  text-align: center;
+  font-size: 14px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.page-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.page-input:focus {
+  outline: none;
+  border-color: #00f0ff;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+.pagination-btn {
+  background: linear-gradient(to right, #00f0ff, #00ff9d);
+  color: #000;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 255, 255, 0.5);
+}
+
+.pagination-btn:disabled {
+  background: rgba(255, 255, 255, 0.2);
+  color: #999;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 40px auto 0 auto; /* Center it horizontally */
+  padding: 10px 20px;
+  max-width: 100%;
+  margin: 20px 30px;
+  gap: 12px;
+  text-align: center;
 }
