@@ -10,12 +10,12 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [touchStartX, setTouchStartX] = useState(0);
-  const [pendingNext, setPendingNext] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [selectedImageId, setSelectedImageId] = useState(null);
   const [clickedLikeIndex, setClickedLikeIndex] = useState(null);
   const [showHeart, setShowHeart] = useState(false);
   const [inputPage, setInputPage] = useState("");
+  const [transitionDirection, setTransitionDirection] = useState("");
   let lastTap = 0;
 
   const API_BASE = "https://risk-repost-backend.onrender.com";
@@ -121,7 +121,6 @@ function App() {
 
   const closePreview = () => {
     setPreviewImage(null);
-    setPendingNext(false);
   };
 
   useEffect(() => {
@@ -131,6 +130,7 @@ function App() {
   const nextImage = useCallback(() => {
     const nextIndex = currentIndex + 1;
     if (nextIndex < allImages.length) {
+      setTransitionDirection("left");
       setCurrentIndex(nextIndex);
       setPreviewImage(allImages[nextIndex]);
       setSelectedImageId(allImages[nextIndex].id);
@@ -139,6 +139,7 @@ function App() {
 
   const prevImage = useCallback(() => {
     const prevIndex = (currentIndex - 1 + allImages.length) % allImages.length;
+    setTransitionDirection("right");
     setCurrentIndex(prevIndex);
     setPreviewImage(allImages[prevIndex]);
     setSelectedImageId(allImages[prevIndex].id);
@@ -265,7 +266,7 @@ function App() {
                   setLoading(true);
                   fetchImages(targetPage).then(() => {
                     setLoading(false);
-                    setInputPage(""); // clear after jump
+                    setInputPage("");
                   });
                 }
               }}
@@ -304,6 +305,14 @@ function App() {
               <img
                 src={previewImage.url}
                 alt=""
+                className={
+                  transitionDirection === "left"
+                    ? "image-slide-left"
+                    : transitionDirection === "right"
+                    ? "image-slide-right"
+                    : ""
+                }
+                onAnimationEnd={() => setTransitionDirection("")}
                 onDoubleClick={triggerDoubleLike}
                 onTouchStart={() => {
                   const now = Date.now();
