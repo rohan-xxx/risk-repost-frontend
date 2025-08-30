@@ -18,7 +18,7 @@ function App() {
   const [transitionDirection, setTransitionDirection] = useState("");
   let lastTap = 0;
 
-  const API_BASE = "https://risk-repost-backend.onrender.com";
+  const API_BASE = "http://localhost:5000";
 
   const fetchImages = async (page, append = false) => {
     try {
